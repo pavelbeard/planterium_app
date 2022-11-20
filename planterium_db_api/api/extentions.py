@@ -12,4 +12,5 @@ class Base64Bytes(bytes):
 
     @classmethod
     def __get_validators__(cls) -> 'CallableGenerator':
-        yield cls.
+        # yield cls.
+        pass
