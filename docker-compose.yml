@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  nginx_fs:
+    image: jwilder/nginx-proxy
+    container_name: nginx_fs
+    ports:
+      - '7001:80'
+    volumes:
+#      - ./planterium_file_server/static/images:/usr/share/nginx/images
+      -

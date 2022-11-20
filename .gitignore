@@ -1,0 +1,9 @@
+/.idea
+/planterium_file_server/.idea
+/planterium_bot/.idea
+/planterium_bot/.env
+/planterium_bot/app/bot/tests.py
+/planterium_db_api/.idea
+/planterium_db_api/env
+/planterium_db_api/t
+/planterium_db_api/api/tests.py
