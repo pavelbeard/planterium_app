@@ -3,7 +3,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 from telebot import types
 from telebot.async_telebot import AsyncTeleBot
-from keyboard import InlineKeyboardConstructor
+from .keyboard import InlineKeyboardConstructor
 
 # собираем клаву
 kb = InlineKeyboardConstructor(

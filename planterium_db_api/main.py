@@ -13,7 +13,14 @@ from api.models import Base, Customer, Order, Plant
 ### global startup ###
 api = FastAPI()
 # he-he, this is data from the test database! a present database works with environment variables
-engine = create_engine("postgresql+psycopg2://pavelbeard:\"Rt3%YiOO\"@localhost:8001/test_db", echo=True)
+
+DB_USERNAME = os.getenv('POSTGRES_USER')
+DB_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+DB_HOST = os.getenv('POSTGRES_HOST')
+DB_PORT = os.getenv('POSTGRES_PORT')
+DATABASE = os.getenv('POSTGRES_DB')
+
+engine = create_engine(f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}", echo=True)
 Base.metadata.create_all(engine)
 #####################
 
