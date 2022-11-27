@@ -1,7 +1,9 @@
 /.idea
+/test-docker-compose.yml
 /planterium_file_server/.idea
 /planterium_bot/.idea
 /planterium_bot/env
+/planterium_bot/test.Dockerfile
 /planterium_bot/app/bot/tests.py
 /planterium_db_api/.idea
 /planterium_db_api/env
@@ -10,3 +12,5 @@
 /planterium_db_api/test.Dockerfile
 /planterium_db_api/postgres_data
 /planterium_db_api/log
+/planterium_file_server/test.Dockerfile
+/planterium_file_server/static/images/*

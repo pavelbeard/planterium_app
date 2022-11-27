@@ -1,0 +1,29 @@
+{
+    "listeners": {
+        "*:5200": {
+            "pass": "routes"
+        }
+    },
+    "routes": [
+        {
+            "match": {
+                "uri": "/"
+            },
+            "action": {
+                "share": "/usr/share/nginx/html$uri",
+                "index": "index.html"
+            }
+        },
+        {
+            "match": {
+                "uri": [
+                    "/images/*.jpg"
+                ]
+            },
+            "action": {
+                "share": "/usr/share/nginx$uri"
+            }
+        }
+    ]
+}
+
