@@ -54,7 +54,6 @@ main_btns = kb.gen_main_menu_markup()
 contact_btns = kb.gen_contacts_menu_markup()
 catalog_btns = kb.gen_catalog_menu_markup()
 plants_btns = kb.gen_list_of_plants()
-# back_btns = keyboard.gen_back_btns_markup()
 owner_btn = kb.gen_owner_btn_markup()
 ig_btn = kb.gen_instagram_btn_markup()
 tg_btn = kb.gen_telegram_btn_markup()
@@ -207,6 +206,5 @@ class LevelThreeCallbackHandler(CallbackHandler):
                     media=None, chat_id=call.message.chat.id, message_id=call.message.id,
                     reply_markup=catalog_btns
                 )
-                # await bot.edit_message_text('test', call.message.chat.id, call.message.id,
-                #                             reply_markup=catalog_btns)
+
 

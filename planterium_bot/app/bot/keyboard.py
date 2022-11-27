@@ -188,6 +188,7 @@ class InlineKeyboardConstructor(KeyboardConstructor):
         self.__plants_menu_btns_class = self.plants_menu_btns(*plants_menu_btns_titles)  # кнопки в
         # категории "растения"
 
+    # region Properties
     @property
     def get_main_menu_class(self) -> namedtuple:
         """
@@ -219,6 +220,7 @@ class InlineKeyboardConstructor(KeyboardConstructor):
         :return: namedtuple
         """
         return self.__plants_menu_btns_class
+    # endregion
 
     def get_fields(self, named_tuple: namedtuple) -> namedtuple:
         """

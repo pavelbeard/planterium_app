@@ -7,3 +7,6 @@
 /planterium_db_api/env
 /planterium_db_api/t
 /planterium_db_api/api/tests.py
+/planterium_db_api/test.Dockerfile
+/planterium_db_api/postgres_data
+/planterium_db_api/log
