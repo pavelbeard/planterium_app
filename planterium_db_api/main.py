@@ -14,11 +14,18 @@ from api.models import Base, Customer, Order, Plant
 api = FastAPI()
 # he-he, this is data from the test database! a present database works with environment variables
 
-DB_USERNAME = os.getenv('POSTGRES_USER')
-DB_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-DB_HOST = os.getenv('POSTGRES_HOST')
-DB_PORT = os.getenv('POSTGRES_PORT')
-DATABASE = os.getenv('POSTGRES_DB')
+# DB_USERNAME = os.getenv('POSTGRES_USER')
+# DB_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+# DB_HOST = os.getenv('POSTGRES_HOST')
+# DB_PORT = os.getenv('POSTGRES_PORT')
+# DATABASE = os.getenv('POSTGRES_DB')
+
+# test varables
+DB_USERNAME = 'pavelbeard'
+DB_PASSWORD = 'Rt3*YiOO'
+DB_HOST = 'localhost'
+DB_PORT = '8001'
+DATABASE = 'test_db'
 
 engine = create_engine(f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}", echo=True)
 Base.metadata.create_all(engine)
@@ -53,7 +60,7 @@ async def get_customer(customer_id: int):
     query = select(Customer).where(Customer.id == customer_id)
     customer = session.scalar(query)
 
-    logging.info(f"/api/get_customer/{customer_id} works normally")
+    logging.info(f"/api/get_customer/{customer_id} works normally. status_code=200")
 
     return customer
 
@@ -66,6 +73,17 @@ async def get_order(order_id: int):
     :return:
     """
     pass
+
+
+@api.get("/api/get_plant/{plant_id}")
+async def get_plant(plant_id: int):
+    session = Session(engine)
+    query = select(Plant).where(Plant.id == plant_id)
+    plant = session.scalar(query)
+
+    logging.info(f"/api/get_plant/{plant} works normally. status_code=200")
+
+    return plant
 
 
 @api.post("/api/post_plant")
@@ -101,6 +119,6 @@ async def post_customer(request: Request):
         session.add(new_customer)
         session.commit()
 
-    logging.info(f"/api/post_customer works normally")
+    logging.info(f"/api/post_customer works normally. status_code=200")
 
     return {"load": "done"}

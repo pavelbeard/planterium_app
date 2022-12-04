@@ -7,7 +7,7 @@ from sqlalchemy import (
 from sqlalchemy.sql import select
 
 
-class Schema():
+class Schema:
     __metadata = MetaData()
     __DATABASE_URL = 'sqlite:///../sqlite3.db?check_same_thread=False'
 
