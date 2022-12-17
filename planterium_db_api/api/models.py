@@ -1,31 +1,41 @@
 import datetime
+import os
 from typing import AsyncGenerator
 
-from fastapi import Depends
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, BigInteger, String, DateTime, ForeignKey, Text, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-from sqlalchemy.testing.pickleable import User
+
+# from sqlalchemy.testing.pickleable import User
 
 Base = declarative_base()
 
-# test varables
-DB_USERNAME = 'pavelbeard'
-DB_PASSWORD = 'Rt3*YiOO'
-DB_HOST = 'localhost'
-DB_PORT = '8001'
-DATABASE = 'test_db'
+# global startup #
+# he-he, this is data from the test database! a present database works with environment variables
+
+DB_USERNAME = os.getenv('POSTGRES_USER', 'pavelbeard')
+DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'Rt3*YiOO')
+DB_HOST = os.getenv('POSTGRES_HOST', 'localhost')
+DB_PORT = os.getenv('POSTGRES_PORT', '9002')
+DATABASE = os.getenv('POSTGRES_DB', 'test_db')
+
 
 engine = create_async_engine(
-    f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}",
+    f"postgresql+asyncpg://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}",
     echo=True
 )
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
+##################
 
-class User(SQLAlchemyBaseUserTableUUID, Base):
-    pass
+
+# class PlatformUser(SQLAlchemyBaseUserTableUUID, Base):
+#     pass
+
+
+class BotAdmin(Base):
+    __tablename__ = 'bot_admin'
+    user_id = Column(BigInteger, primary_key=True, nullable=False)
 
 
 class Customer(Base):
@@ -72,8 +82,8 @@ class Plant(Base):
     order_id = Column(Integer, ForeignKey('order.id', ondelete='CASCADE'))
 
     def __repr__(self):
-        return f'Plant(id={self.id!r}, plant_image={self.plant_image!r}, plant_name={self.plant_name},' \
-               f'plant_text={self.plant_text}, with_transplant={self.with_transplant}, amount={self.amount})'
+        return f'Plant({self.id=}, {self.plant_image=}, {self.plant_name=},' \
+               f'{self.plant_text=}, {self.with_transplant=}, {self.amount=})'
 
 
 async def create_db_and_tables():
@@ -81,10 +91,10 @@ async def create_db_and_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_async_session() -> AsyncSession:
     async with async_session_maker() as session:
         yield session
 
 
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+# async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+#     yield SQLAlchemyUserDatabase(session, PlatformUser)

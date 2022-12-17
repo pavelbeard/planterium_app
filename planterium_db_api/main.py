@@ -2,34 +2,27 @@ import json
 import logging
 import logging.handlers
 import os.path
+from typing import Any
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Depends
 from sqlalchemy import create_engine, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from starlette.responses import PlainTextResponse, JSONResponse
+from api.models import (
+    Base, create_db_and_tables, get_async_session, BotAdmin,
+    Customer, Order, Plant)
 
-from api.models import Base, Customer, Order, Plant
-
-### global startup ###
 api = FastAPI()
-# he-he, this is data from the test database! a present database works with environment variables
+headers = {"Content-Type": "application/json;charset=utf-8"}
 
-# DB_USERNAME = os.getenv('POSTGRES_USER')
-# DB_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-# DB_HOST = os.getenv('POSTGRES_HOST')
-# DB_PORT = os.getenv('POSTGRES_PORT')
-# DATABASE = os.getenv('POSTGRES_DB')
 
-# test varables
-DB_USERNAME = 'pavelbeard'
-DB_PASSWORD = 'Rt3*YiOO'
-DB_HOST = 'localhost'
-DB_PORT = '8001'
-DATABASE = 'test_db'
-
-engine = create_engine(f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DATABASE}", echo=True)
-Base.metadata.create_all(engine)
-#####################
+def success_response(key: str, value: Any):
+    return JSONResponse(
+        status_code=200,
+        headers=headers,
+        content={key: value}
+    )
 
 
 @api.on_event("startup")
@@ -40,13 +33,15 @@ async def startup():
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
 
-    format = "[%(asctime)s] - [%(levelname)s] - [%(filename)s].[%(module)s]" \
-             "{%(funcName)s:%(lineno)d: %(message)s }"
+    logger_format = "[%(asctime)s] - [%(levelname)s] - [%(filename)s].[%(module)s]" \
+                    "{%(funcName)s:%(lineno)d: %(message)s }"
 
     logging.getLogger(__name__)
-    logging.basicConfig(filename=log_file, filemode='a', format=format,
+    logging.basicConfig(filename=log_file, filemode='a', format=logger_format,
                         level=logging.INFO)
     logging.handlers.RotatingFileHandler(filename=log_file, mode='a', maxBytes=1024 ** 2, backupCount=10)
+
+    await create_db_and_tables()
 
 
 @api.get("/")
@@ -56,9 +51,9 @@ async def main():
 
 @api.get("/api/get_customer/{customer_id}")
 async def get_customer(customer_id: int):
-    session = Session(engine)
+    session = get_async_session()
     query = select(Customer).where(Customer.id == customer_id)
-    customer = session.scalar(query)
+    customer = await session.scalar(query)
 
     logging.info(f"/api/get_customer/{customer_id} works normally. status_code=200")
 
@@ -77,9 +72,9 @@ async def get_order(order_id: int):
 
 @api.get("/api/get_plant/{plant_id}")
 async def get_plant(plant_id: int):
-    session = Session(engine)
+    session = get_async_session()
     query = select(Plant).where(Plant.id == plant_id)
-    plant = session.scalar(query)
+    plant = await session.scalar(query)
 
     logging.info(f"/api/get_plant/{plant} works normally. status_code=200")
 
@@ -95,14 +90,14 @@ async def post_plant(request: Request):
     """
     data = await request.json()
 
-    with Session(engine) as session:
+    with get_async_session() as session:
         new_plant = Plant(**data)
         session.add(new_plant)
         session.commit()
 
     logging.info(f"/api/post_plant works normally. status_code=200")
 
-    return {"load_plant": "done"}
+    return success_response("load_plant", "done")
 
 
 @api.post("/api/post_customer")
@@ -114,11 +109,30 @@ async def post_customer(request: Request):
     """
     data = await request.json()
 
-    with Session(engine) as session:
+    with get_async_session() as session:
         new_customer = Customer(**data)
         session.add(new_customer)
         session.commit()
 
     logging.info(f"/api/post_customer works normally. status_code=200")
 
-    return {"load": "done"}
+    return success_response("load", "done")
+
+
+@api.post("/api/check_admin")
+async def check_admin(request: Request, session: AsyncSession = Depends(get_async_session)):
+    """
+    Проверяет id пользователя, что он администратор
+    :param session: Сессия с базой данных
+    :param request: HTTP-запрос к API
+    :return:
+    """
+    data = await request.json()
+    user = int(data.get('user_id'))
+    query = select(BotAdmin).where(BotAdmin.user_id == user)
+    admin = [a for a in await session.execute(query)]
+
+    return success_response("check_admin", 1) if len(admin) > 0 else JSONResponse(
+        status_code=403, headers=headers, content={"check_admin": 0}
+    )
+
