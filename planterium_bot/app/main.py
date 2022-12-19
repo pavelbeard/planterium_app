@@ -19,10 +19,17 @@ async def main(msg: types.Message):
         case '/help':
             pass
         case '/admin':
+            send_message_cb = planterium_bot.send_message
+
             result = await request_to_check_admin(msg.from_user.id)
             admin_markup = bot_base.admin_menu.assemble_keyboard()
-            is_admin, reply_markup = ("Интерфейс администратора", admin_markup) if result else ('Нет доступа', None)
-            await planterium_bot.send_message(chat_id=msg.chat.id, text=is_admin, reply_markup=reply_markup)
+
+            if isinstance(result, str):
+                await send_message_cb(chat_id=msg.chat.id, text=result)
+            elif result == 1:
+                await send_message_cb(chat_id=msg.chat.id, text='Интерфейс администратора', reply_markup=admin_markup)
+            else:
+                await send_message_cb(chat_id=msg.chat.id, text='Нет доступа')
 
 
 @bot_base.bot.callback_query_handler(func=lambda call: call.data in bot_base.main_menu.cb_data)

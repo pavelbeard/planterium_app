@@ -1,5 +1,4 @@
 import json
-
 from telebot.types import CallbackQuery
 from aiohttp import client
 from .startup import Startup
@@ -61,7 +60,6 @@ async def admin_menu_handler(bot_base: Startup, call: CallbackQuery):
             await bot_base.bot
 
 
-
 async def lvl_one_menu_handler(bot_base: Startup, call: CallbackQuery):
     """
     Обработчик меню первого уровня: "о владельце", "контакты"\n
@@ -72,13 +70,13 @@ async def lvl_one_menu_handler(bot_base: Startup, call: CallbackQuery):
         case 'back':
             # главное меню
             await bot_base.bot.edit_message_text(welcome_msg(
-                    first_name=call.message.chat.first_name, last_name=call.message.chat.last_name),
+                first_name=call.message.chat.first_name, last_name=call.message.chat.last_name),
                 chat_id=call.message.chat.id, message_id=call.message.message_id,
                 reply_markup=bot_base.main_menu.assemble_keyboard()
             )
 
 
-async def request_to_check_admin(user_id: int) -> bool:
+async def request_to_check_admin(user_id: int) -> bool | str:
     """
     Запрос на проверку прав администратора
     :param user_id: ID юзера - ключ к админке
@@ -91,4 +89,7 @@ async def request_to_check_admin(user_id: int) -> bool:
     async with client.ClientSession() as session:
         async with session.post(url=url, headers=headers, data=user_data) as response:
             data = await response.json()
-            return data.get('check_admin')
+            try:
+                return bool(data['check_admin_status'])
+            except KeyError:
+                return data['postgresql_status']

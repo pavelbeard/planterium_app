@@ -1,2 +1,3 @@
 settings:
   api_url: "http://127.0.0.1:8001"
+  log_dir_path: D:\Pycharm\sobes_projects\sobes_projects\planterium_app\planterium_bot

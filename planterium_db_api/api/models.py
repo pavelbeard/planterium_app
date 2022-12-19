@@ -1,12 +1,8 @@
 import datetime
 import os
-from typing import AsyncGenerator
-
 from sqlalchemy import Column, Integer, BigInteger, String, DateTime, ForeignKey, Text, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-
-# from sqlalchemy.testing.pickleable import User
 
 Base = declarative_base()
 
@@ -27,10 +23,6 @@ engine = create_async_engine(
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 ##################
-
-
-# class PlatformUser(SQLAlchemyBaseUserTableUUID, Base):
-#     pass
 
 
 class BotAdmin(Base):
@@ -94,7 +86,3 @@ async def create_db_and_tables():
 async def get_async_session() -> AsyncSession:
     async with async_session_maker() as session:
         yield session
-
-
-# async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-#     yield SQLAlchemyUserDatabase(session, PlatformUser)

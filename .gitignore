@@ -12,7 +12,7 @@
 /planterium_db_api/api/tests.py
 /planterium_db_api/test.Dockerfile
 /planterium_db_api/postgres_data
-/planterium_db_api/log
+/planterium_db_api/logs
 /planterium_db_api/api_variables.env
 /planterium_file_server/test.Dockerfile
 /planterium_file_server/static/images/*

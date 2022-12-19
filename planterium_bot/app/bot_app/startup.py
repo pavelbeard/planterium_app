@@ -1,7 +1,8 @@
-import os
-import os.path as os_path
+import logging.handlers
 
 import yaml
+import os
+import os.path as os_path
 from telebot import async_telebot
 from .keyboard import InlineKeyboardConstructor
 
@@ -38,7 +39,7 @@ class Startup:
                 ('Спасение🚑', 'Озеленение🪴',),
                 ('Контакты📱', 'Сотрудничество🤝'),
             )
-        ) # sss
+        )  # sss
         self.back = InlineKeyboardConstructor(
             btns_base=('back',),
             btns_titles=('Назад🔙',)
@@ -61,8 +62,8 @@ class Startup:
             url3='https://t.me/stalmt'
         )
         self.admin_menu = InlineKeyboardConstructor(
-            btns_base=(('edit_about', 'edit_catalog'), ),
-            btns_titles=(("""Редактировать "О Planterium'e🪴""", "Редактировать каталог"))
+            btns_base=(('edit_about', 'edit_catalog'),),
+            btns_titles=(("""Редактировать "О Planterium'e🪴""", "Редактировать каталог"),)
         )
 
     @staticmethod
@@ -71,8 +72,14 @@ class Startup:
             "D:\\", "Pycharm", "sobes_projects", "sobes_projects",
             "planterium_app", "planterium_bot", "bot-config.yml"
         ))
-        with open(path, 'r') as config:
-            return yaml.safe_load(config)
+        try:
+            file = open(path, 'r')
+        except FileNotFoundError as err:
+            print(err)
+            exit(1)
+        else:
+            with file as config:
+                return yaml.safe_load(config)
 
 
 bot_base = Startup()
