@@ -5,6 +5,8 @@ import unittest
 from telebot import types
 from telebot.async_telebot import AsyncTeleBot
 
+from app.bot_app.startup import Startup
+
 
 class TestPytelegramApiBot(unittest.TestCase):
     from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -33,7 +35,6 @@ class TestPytelegramApiBot(unittest.TestCase):
         from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
         bot = async_telebot.AsyncTeleBot(self.API_KEY)
-
 
         async def main_menu(message: types.Message, callback=False):
             main_menu_title = 'Main menu'
@@ -242,6 +243,11 @@ class TestNewKeyboard(unittest.TestCase):
         bot.infinity_polling(timeout=60, skip_updates=False)
 
         pass
+
+    def test_set_config(self):
+        config = Startup()
+        result = config.set_config({"about_planterium": "тыры пыры, бара бара"})
+        assert True == result
 
 
 if __name__ == '__main__':

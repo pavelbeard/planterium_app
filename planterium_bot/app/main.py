@@ -1,6 +1,8 @@
 import asyncio
 
 from telebot import types
+
+from app.bot_app.handlers import admin_menu_handler
 from bot_app import bot_base
 from bot_app import main_menu_handler, lvl_one_menu_handler, request_to_check_admin, welcome_msg
 from bot_app.startup import bot as planterium_bot
@@ -22,7 +24,9 @@ async def main(msg: types.Message):
             send_message_cb = planterium_bot.send_message
 
             result = await request_to_check_admin(msg.from_user.id)
-            admin_markup = bot_base.admin_menu.assemble_keyboard()
+            admin_markup = bot_base.admin_menu.assemble_keyboard().row(
+                *bot_base.back.assemble_keyboard().keyboard[0]
+            )
 
             if isinstance(result, str):
                 await send_message_cb(chat_id=msg.chat.id, text=result)
@@ -36,6 +40,11 @@ async def main(msg: types.Message):
 async def main_menu(call: types.CallbackQuery):
     """Обрабатывает данные коллбэков из главного меню"""
     await main_menu_handler(bot_base=bot_base, call=call)
+
+
+@bot_base.bot.callback_query_handler(func=lambda call: call.data in bot_base.admin_menu.cb_data + bot_base.back.cb_data)
+async def admin_menu(call: types.CallbackQuery):
+    await admin_menu_handler(bot_base=bot_base, call=call)
 
 
 @bot_base.bot.callback_query_handler(func=lambda call: call.data in bot_base.back.cb_data)

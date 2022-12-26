@@ -16,8 +16,8 @@ router = APIRouter()
 
 # insert into BotAdmin
 
-@router.post("/api/create_admin")
-async def create_bot_admin(bot_admin: validation_models.BotAdmin):
+@router.delete("/api/delete_admin")
+async def delete_bot_admin(bot_admin: validation_models.BotAdmin):
     """Создает администратора бота"""
     try:
         new_admin = bot_admin
@@ -33,8 +33,8 @@ async def create_bot_admin(bot_admin: validation_models.BotAdmin):
 
 # insert into Customer
 
-@router.post("/api/post_customer")
-async def post_customer(request: Request):
+@router.post("/api/delete_customer")
+async def delete_customer(request: Request):
     """
     Загружает в базу данных информацию о покупателе\n
     :param session:
@@ -46,8 +46,8 @@ async def post_customer(request: Request):
 
 # insert into Plant
 
-@router.post("/api/post_plant")
-async def post_plant(request: Request):
+@router.post("/api/delete_plant")
+async def delete_plant(request: Request):
     """
     Загружает в базу данных информацию о цветочках :)\n
     :param session:

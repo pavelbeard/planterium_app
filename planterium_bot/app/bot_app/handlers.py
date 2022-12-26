@@ -57,7 +57,20 @@ async def admin_menu_handler(bot_base: Startup, call: CallbackQuery):
     """
     match call.data:
         case 'back':
-            await bot_base.bot
+            await bot_base.bot.edit_message_text(text=welcome_msg(
+                first_name=call.message.chat.first_name, last_name=call.message.chat.last_name),
+                chat_id=call.message.chat.id, message_id=call.message.message_id,
+                reply_markup=bot_base.main_menu.assemble_keyboard()
+            )
+        case 'edit_about':
+            await bot_base.bot.edit_message_text(
+                text="Изменить описание Planterium'a"
+            )
+        case 'edit_catalog':
+            await bot_base.bot.edit_message_text(
+                text="Каталог", chat_id=call.message.chat.id, message_id=call.message.message_id,
+                reply_markup=bot_base.edit_plants_menu.assemble_keyboard()
+            )
 
 
 async def lvl_one_menu_handler(bot_base: Startup, call: CallbackQuery):
@@ -82,7 +95,7 @@ async def request_to_check_admin(user_id: int) -> bool | str:
     :param user_id: ID юзера - ключ к админке
     :return: True - если id есть базе данных админов, иначе False
     """
-    url = Startup.get_config().get('settings').get('api_url') + "/api/check_admin"
+    url = Startup.get_config().get('settings').get('api_url') + "/app/check_admin"
     headers = {"Content-Type": "application/json;charset=utf8"}
     user_data = json.dumps({"user_id": str(user_id)})
 

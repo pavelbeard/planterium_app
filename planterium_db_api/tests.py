@@ -11,7 +11,7 @@ class TestAPI(unittest.TestCase):
     headers = {"Content-Type": "application/json"}
 
     def test_main(self):
-        response = self.client.get('/')
+        response = self.client.get('/api/main')
         assert response.status_code == 200
         assert response.json() == {'1': '1'}
 
@@ -22,7 +22,7 @@ class TestAPI(unittest.TestCase):
 
     def test_post_customer(self):
         data = {"first_name": "pavel", "last_name": "borodin"}
-        response = self.client.post('/api/post_customer', json=data)
+        response = self.client.post('/app/post_customer', json=data)
         assert response.status_code == 200
         assert response.json() == {"load": "done"}
 
@@ -36,16 +36,23 @@ class TestAPI(unittest.TestCase):
              "amount": 10},
         ]
 
-        response = self.client.post('/api/post_plant', content=json.dumps(data), headers=self.headers)
+        response = self.client.post('/app/post_plant', content=json.dumps(data), headers=self.headers)
         assert response.status_code == 200
         assert response.json() == {'load_plant': 'done'}
 
     def test_get_plant(self):
-        response = self.client.get('/api/get_plant/1')
+        response = self.client.get('/app/get_plant/1')
         assert response.status_code == 200
 
     def test_add_admin(self):
         data = {"user_id": 1131}
-        response = self.client.post("/api/add_bot_admin", headers=self.headers, content=json.dumps(data))
+        response = self.client.post("/api/create_admin", headers=self.headers, content=json.dumps(data))
         assert response.status_code == 200
-        assert response.json() == {'adding_status': 'done'}
+
+    def test_get_admins(self):
+        response = self.client.get("/api/get_admins", headers=self.headers)
+        assert type(response.json()) == list
+        assert response.status_code == 200
+
+    # TODO: разобраться с миграциями
+    # TODO: написать тесты для остальных endpoints

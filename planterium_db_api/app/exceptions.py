@@ -3,7 +3,6 @@ from fastapi.routing import APIRoute, APIRouter
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
-
 router = APIRouter()
 
 
@@ -11,6 +10,8 @@ class NoDBConnectionException(OSError):
     def __init__(self, message: str):
         self.message = message
 
+
+# TODO: Обернуть sessionmaker в обработку исключений базы данных
 
 class NoDatabaseConnection(APIRoute):
     def get_route_handler(self) -> Callable:
@@ -23,4 +24,3 @@ class NoDatabaseConnection(APIRoute):
                 return JSONResponse(status_code=503, content={"postgresql_status": "postgresql service not available!"})
 
         return custom_route_handler
-

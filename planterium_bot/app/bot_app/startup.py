@@ -17,6 +17,10 @@ class Startup:
     """
     __API_KEY = os.getenv('API_KEY_PLANTERIUM_BOT', "5741189229:AAF9nka1wLsCKLOO81ETXfu1WGG_wyg3NgU")
     bot = async_telebot.AsyncTeleBot(token=__API_KEY)
+    path = os.getenv("BOT_CONFIG_YML_PATH", os_path.join(
+        "D:\\", "Pycharm", "sobes_projects", "sobes_projects",
+        "planterium_app", "planterium_bot", "bot-config.yml"
+    ))
 
     def __init__(self):
         #########################################
@@ -63,23 +67,53 @@ class Startup:
         )
         self.admin_menu = InlineKeyboardConstructor(
             btns_base=(('edit_about', 'edit_catalog'),),
-            btns_titles=(("""Редактировать "О Planterium'e🪴""", "Редактировать каталог"),)
+            btns_titles=(("""Edit "О Planterium'e🪴""", "Редактировать каталог"),)
         )
 
-    @staticmethod
-    def get_config() -> {}:
-        path = os.getenv("BOT_CONFIG_YML_PATH", os_path.join(
-            "D:\\", "Pycharm", "sobes_projects", "sobes_projects",
-            "planterium_app", "planterium_bot", "bot-config.yml"
-        ))
+        ###### EDIT CATALOG MENU ######
+        self.edit_plants_menu = InlineKeyboardConstructor(
+            btns_base=((),),
+            btns_titles=((),)
+        )
+
+    def get_plants_for_keyboard(self):
+        # TODO: реализвать функцию заполнения клавиатуры
+        self.edit_plants_menu
+        pass
+
+    @classmethod
+    def get_config(cls) -> {}:
         try:
-            file = open(path, 'r')
+            file = open(cls.path, 'r')
         except FileNotFoundError as err:
             print(err)
             exit(1)
         else:
             with file as config:
                 return yaml.safe_load(config)
+
+    @classmethod
+    def set_config(cls, data: dict):
+        """
+        Сохраняет данные в конфиг
+        :param data: Данные для записи в конфиг
+        :return: None
+        """
+        try:
+            file = open(cls.path, 'w')
+            old_file = open(cls.path, 'r')
+        except FileNotFoundError as err:
+            print(err)
+            return False
+        else:
+            with file as f, old_file as old_f:
+                # TODO: разобраться с чертовой КОДИРОВКОЙ!!!!1111111
+
+                old_data = yaml.safe_load(old_f)
+                new_data = old_data.get('settings')
+                new_data.update(data)
+                yaml.dump(stream=f, data=new_data, sort_keys=False, default_flow_style=False, encoding='cp1252')
+                return True
 
 
 bot_base = Startup()
