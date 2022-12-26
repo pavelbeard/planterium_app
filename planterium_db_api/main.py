@@ -22,16 +22,6 @@ RELOAD = os.getenv("DB_API_ENABLE_RELOAD", True)
 logger = get_logger(__name__)
 
 
-@app.on_event("startup")
-async def startup():
-    try:
-        async with engine.begin() as conn:
-            # await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
-    except OSError as err:
-        print(err)
-
-
 @app.get("/api/main")
 async def main():
     return {"1": "1"}

@@ -20,13 +20,6 @@ engine = create_async_engine(DATABASE_URL, future=True, echo=True)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-async def inspect_db():
-    async with engine.connect() as conn:
-        tables = await conn.run_sync(
-            lambda sync_conn: inspect(sync_conn).get_table_names()
-        )
-
-
 Base = declarative_base()
 
 ######################################################

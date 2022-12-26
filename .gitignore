@@ -1,5 +1,6 @@
 *.idea
 *test*
 *.env
-/planterium_db_api/prod.alembic.ini
+*.log
+/planterium_db_api/migration/versions/*
 /planterium_file_server/static/images
